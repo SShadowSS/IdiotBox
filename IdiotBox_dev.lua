@@ -9,6 +9,9 @@ local Changelogs = [[
 New features include:
 	- Dynamic configs
 ]]
+-- Detours -- 
+local detours = {}
+local global = {_G}
 --- Initial Values ---
 local ProtectedFilenames = {["IdiotBox_latest.lua"]=true,["IdiotBox_backup.lua"]=true,["IdiotBox_dev.lua"]=true}
 local build = 700
