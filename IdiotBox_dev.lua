@@ -197,8 +197,8 @@ local menudebounce = false
 local function drawSquare()
 	surface.SetDrawColor(50, 50, 50, 255)
 	--surface.DrawRect(50, 50, 100, 100)
-	local SX = ScreenX()*.4
-	local SY = ScreenX()*.5
+	local SX = ScreenY()*.75
+	local SY = ScreenY()*.9
 	draw.RoundedBox(ScreenY()*.025, ScreenX()*.5-SX*.5, ScreenY()*.5-SY*.5, SX,SY, Color(100, 100, 100, 100))
 end
 
