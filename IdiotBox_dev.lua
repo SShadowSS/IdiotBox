@@ -132,10 +132,6 @@ local function changeData(tabl,pathArray) --- stolen from devforum | Source: htt
 	local template = DefaultConfig
 	for index, path in ipairs(pathArray) do
 		if pathArray[index + 2]==nil then
-			--if typeof(ConfigTemplate[pathArray[index + 1]])==typeof(tabl[pathArray[index + 1]]) then tabl[path] = pathArray[index + 1] end
-			--if typeof(tabl[path])==typeof(ConfigTemplate[path]) then
-			--print(typeof(tabl[path]),typeof(template[path]),typeof(pathArray[index + 1]))
-
 			if typeof(pathArray[index + 1]) == typeof(template[path]) and pathArray[index + 1]~=nil and template[path]~=nil then tabl[path] = pathArray[index + 1] end
 			--end
 		else
@@ -154,3 +150,26 @@ concommand.Add("idiot_setvalue", function(caller, cmd, args)
 	for _,N in pairs(args) do Lego[#Lego+1] = TranslateValue(uppercase(N)) end
 	changeData(CurrentConfig,Lego)
 end,nil,"Manually set values within IdiotBox. You should use this inside autoexec binds for your own toggles.")
+
+--MENU
+local menutoggle = false
+
+local function drawSquare()
+	surface.SetDrawColor(50, 50, 50, 255)
+	surface.DrawRect(ScrW()*0.5, ScrH()*0.5, ScrW()*0.4, ScrH()*0.4)
+end
+
+local function toggleMenu()
+	menutoggle = not menutoggle
+	if menutoggle then
+		hook.Add("HUDPaint", "drawSquare")
+	end
+end
+
+local function keyPressed(key)
+	if key == KEY_HOME then
+		toggleMenu()
+	end
+end
+
+hook.Add("KeyPress", "keyPressed", keyPressed)
