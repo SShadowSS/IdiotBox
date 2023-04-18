@@ -9,9 +9,6 @@ local Changelogs = [[
 New features include:
 	- Dynamic configs
 ]]
--- Detours -- 
-local detours = {}
-local global = {_G}
 --- Initial Values ---
 local ProtectedFilenames = {["IdiotBox_latest.lua"]=true,["IdiotBox_backup.lua"]=true,["IdiotBox_dev.lua"]=true}
 local build = 700
@@ -75,52 +72,89 @@ local NewCmdVar = CreateClientConVar
 local typeof = type
 local lowercase = string.lower
 local uppercase = string.upper
+local ScreenX = ScrW
+local ScreenY = ScrH
 --- Config ---
 local DefaultConfig = {
-	["GENERAL"] = {
-		["OPTIMIZE"] = false,
-		["FREECAM"] = false,
-		["ANTI-AFK"] = false,
-		["ANTI-ADS"] = false,
+	["general"] = {
+		["optimize"] = false,
+		["freecam"] = false,
+		["anti-afk"] = false,
+		["anti-ads"] = false,
 		["ANTI-BLIND"] = false,
 	},
-	["ESP"] = {},
-	["GFUEL"] = {
-		["AIMBOT"] = {State = false},
-		["TRIGGERBOT"] = {State = false, Smooth = false, AZoom = false, AStop = false, ACrouch = false},
+	["esp"] = {},
+	["gfuel"] = {
+		["aimbot"] = {
+			state = false, 
+			fov = 90, 
+			interpolation = false, 
+			silent = false, 
+			afire = false, 
+			azoom = false, 
+			astop = false, 
+			lock = false, 
+			allowplayers = true,
+			allowbots = true,
+			allowteam = false,
+			allowenemy = true,
+			allowfriends = false,
+			allowadmins = true,
+			allowfrozen = false,
+			allowednoclipped = false,
+			alloweddriving = false,
+			allowedtransparent = false,
+			allowedoverheald = false,
+			maxdistance = 1500, 
+			maxvel = 1000, 
+			maxhealth = 500,
+			priority = "crosshair", 
+		},
+		["triggerbot"] = {state = false, smooth = false, azoom = false, astop = false, acrouch = false},
 	},
-	["HVH"] = {},
-	["VISUALS"] = {},
-	["TTT"] = {
-		["TRAITOR-FINDER"] = false,
-		["IGNORE-DETECTIVES"] = false,
-		["IGNORE-TRAITORS"] = false,
-		["ANTI-ROUNDREPORT"] = false,
-		["ANTI-PANELS"] = false,
-		["PROPKILL"] = false,
+	["hvh"] = {},
+	["visuals"] = {},
+	["ttt"] = {
+		["traitor-finder"] = false,
+		["ignore-detectives"] = false,
+		["ignore-traitors"] = false,
+		["anti-roundreport"] = false,
+		["anti-panels"] = false,
+		["propkill"] = false,
 	},
-	["MURDER"] = {
-		["MURDERER-FINDER"] = false,
-		["ANTI-ROUNDREPORT"] = false,
-		["HIDE-FOOTPRINTS"] = false,
-		["NO-BLACKSCREENS"] = false,
+	["murder"] = {
+		["murderer-finder"] = false,
+		["anti-roundreport"] = false,
+		["hide-footprints"] = false,
+		["no-blackscreens"] = false,
 	},
-	["DARKRP"] = {
-		["ANTI-ARREST"] = false,
-		["PROP-OPACITY"] = {State = false, Opacity = 1},
-		["SHOW-MONEY"] = false,
+	["darkrp"] = {
+		["anti-arrest"] = false,
+		["prop-opacity"] = {state = false, opacity = 1},
+		["show-money"] = false,
 	},
-	["MISCELLANEOUS"] = {
-		["CUSTOM-NAME"] = "",
-		["TOOLTIPS"] = false,
-		["PANIC-MODE"] = false,
+	["miscellaneous"] = {
+		["custom-name"] = "",
+		["tooltips"] = false,
+		["panic-mode"] = false,
+		
+		["no-recoil"] = false,
+		["no-spread"] = false,
+		["predict-projectiles"] = false,
+		["auto-reload"] = false,
+		["rapid-fire"] = {state = false, primary = true, delay=0},
+		["abuse-interpolation"] = false,
+		["abuse-bullet-time"] = false,
+		["draw-fov-circle"] = false,
+		["sight-lines"] = false,
+		["wall-check"] = false,
 	},
 }
 
 local CurrentConfig = DefaultConfig
 --- Config Editor [MESS] ---
 local function TranslateValue(str)
-	local tr = str
+	local tr = lowercase(str)
 	if str=="on" or str=="true" or str==1 then tr=true
 	elseif str=="off" or str=="false" or str==0 then tr=false
 	end
@@ -132,6 +166,10 @@ local function changeData(tabl,pathArray) --- stolen from devforum | Source: htt
 	local template = DefaultConfig
 	for index, path in ipairs(pathArray) do
 		if pathArray[index + 2]==nil then
+			--if typeof(ConfigTemplate[pathArray[index + 1]])==typeof(tabl[pathArray[index + 1]]) then tabl[path] = pathArray[index + 1] end
+			--if typeof(tabl[path])==typeof(ConfigTemplate[path]) then
+			--print(typeof(tabl[path]),typeof(template[path]),typeof(pathArray[index + 1]))
+
 			if typeof(pathArray[index + 1]) == typeof(template[path]) and pathArray[index + 1]~=nil and template[path]~=nil then tabl[path] = pathArray[index + 1] end
 			--end
 		else
@@ -147,12 +185,13 @@ end
 
 concommand.Add("idiot_setvalue", function(caller, cmd, args)
 	local Lego = {}
-	for _,N in pairs(args) do Lego[#Lego+1] = TranslateValue(uppercase(N)) end
+	for _,N in pairs(args) do Lego[#Lego+1] = TranslateValue(lowercase(N)) end
 	changeData(CurrentConfig,Lego)
 end,nil,"Manually set values within IdiotBox. You should use this inside autoexec binds for your own toggles.")
 
---MENU
+--- DEBOUNCES ---
 local menutoggle = false
+--- MENU TEST ---
 
 local function drawSquare()
 	surface.SetDrawColor(50, 50, 50, 255)
@@ -161,18 +200,10 @@ local function drawSquare()
 end
 
 local function toggleMenu()
-	menutoggle = not menutoggle
 	if menutoggle then
 		hook.Add("HUDPaint", "drawSquare",drawSquare)
 	else
-		hook.Remove("HUDPaint", "drawSquare")
+		hook.Remove("HUDPaint", "drawSquare",drawSquare)
 	end
+	menutoggle = not menutoggle
 end
-
-local function keyPressed(key)
-	if  key == KEY_HOME then
-		toggleMenu()
-	end
-end
-
-hook.Add("KeyPress", "keyPressed", keyPressed)
