@@ -156,18 +156,21 @@ local menutoggle = false
 
 local function drawSquare()
 	surface.SetDrawColor(50, 50, 50, 255)
-	surface.DrawRect(ScrW()*0.5, ScrH()*0.5, ScrW()*0.4, ScrH()*0.4)
+	surface.DrawRect(50, 50, 100, 100)
+	draw.RoundedBox(8, 50, 50, 100, 100, Color(0, 0, 0, 200))
 end
 
 local function toggleMenu()
 	menutoggle = not menutoggle
 	if menutoggle then
-		hook.Add("HUDPaint", "drawSquare")
+		hook.Add("HUDPaint", "drawSquare",drawSquare)
+	else
+		hook.Remove("HUDPaint", "drawSquare")
 	end
 end
 
 local function keyPressed(key)
-	if key == KEY_HOME then
+	if  key == KEY_HOME then
 		toggleMenu()
 	end
 end
