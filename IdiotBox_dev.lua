@@ -9,6 +9,9 @@ local Changelogs = [[
 New features include:
 	- Dynamic configs
 ]]
+-- Detours -- 
+local detours = {}
+local global = {_G}
 --- Initial Values ---
 local ProtectedFilenames = {["IdiotBox_latest.lua"]=true,["IdiotBox_backup.lua"]=true,["IdiotBox_dev.lua"]=true}
 local build = 700
@@ -74,50 +77,50 @@ local lowercase = string.lower
 local uppercase = string.upper
 --- Config ---
 local DefaultConfig = {
-	["general"] = {
-		["optimize"] = false,
-		["freecam"] = false,
-		["anti-afk"] = false,
-		["anti-ads"] = false,
+	["GENERAL"] = {
+		["OPTIMIZE"] = false,
+		["FREECAM"] = false,
+		["ANTI-AFK"] = false,
+		["ANTI-ADS"] = false,
 		["ANTI-BLIND"] = false,
 	},
-	["esp"] = {},
-	["gfuel"] = {
-		["aimbot"] = {State = false},
-		["triggerbot"] = {State = false, Smooth = false, AZoom = false, AStop = false, ACrouch = false},
+	["ESP"] = {},
+	["GFUEL"] = {
+		["AIMBOT"] = {State = false},
+		["TRIGGERBOT"] = {State = false, Smooth = false, AZoom = false, AStop = false, ACrouch = false},
 	},
-	["hvh"] = {},
-	["visuals"] = {},
-	["ttt"] = {
-		["traitor-finder"] = false,
-		["ignore-detectives"] = false,
-		["ignore-traitors"] = false,
-		["anti-roundreport"] = false,
-		["anti-panels"] = false,
-		["propkill"] = false,
+	["HVH"] = {},
+	["VISUALS"] = {},
+	["TTT"] = {
+		["TRAITOR-FINDER"] = false,
+		["IGNORE-DETECTIVES"] = false,
+		["IGNORE-TRAITORS"] = false,
+		["ANTI-ROUNDREPORT"] = false,
+		["ANTI-PANELS"] = false,
+		["PROPKILL"] = false,
 	},
-	["murder"] = {
-		["murderer-finder"] = false,
-		["anti-roundreport"] = false,
-		["hide-footprints"] = false,
-		["no-blackscreens"] = false,
+	["MURDER"] = {
+		["MURDERER-FINDER"] = false,
+		["ANTI-ROUNDREPORT"] = false,
+		["HIDE-FOOTPRINTS"] = false,
+		["NO-BLACKSCREENS"] = false,
 	},
-	["darkrp"] = {
-		["anti-arrest"] = false,
-		["prop-opacity"] = {State = false, Opacity = 1},
-		["show-money"] = false,
+	["DARKRP"] = {
+		["ANTI-ARREST"] = false,
+		["PROP-OPACITY"] = {State = false, Opacity = 1},
+		["SHOW-MONEY"] = false,
 	},
-	["miscellaneous"] = {
-		["custom-name"] = "",
-		["tooltips"] = false,
-		["panic-mode"] = false,
+	["MISCELLANEOUS"] = {
+		["CUSTOM-NAME"] = "",
+		["TOOLTIPS"] = false,
+		["PANIC-MODE"] = false,
 	},
 }
 
 local CurrentConfig = DefaultConfig
 --- Config Editor [MESS] ---
 local function TranslateValue(str)
-	local tr = lowercase(str)
+	local tr = str
 	if str=="on" or str=="true" or str==1 then tr=true
 	elseif str=="off" or str=="false" or str==0 then tr=false
 	end
@@ -148,6 +151,6 @@ end
 
 concommand.Add("idiot_setvalue", function(caller, cmd, args)
 	local Lego = {}
-	for _,N in pairs(args) do Lego[#Lego+1] = TranslateValue(lowercase(N)) end
+	for _,N in pairs(args) do Lego[#Lego+1] = TranslateValue(uppercase(N)) end
 	changeData(CurrentConfig,Lego)
 end,nil,"Manually set values within IdiotBox. You should use this inside autoexec binds for your own toggles.")
