@@ -191,6 +191,7 @@ end,nil,"Manually set values within IdiotBox. You should use this inside autoexe
 
 --- DEBOUNCES ---
 local menutoggle = false
+local menudebounce = false
 --- MENU TEST ---
 
 local function drawSquare()
@@ -207,3 +208,13 @@ local function toggleMenu()
 	end
 	menutoggle = not menutoggle
 end
+
+local function keyPressed(a,b)
+	if  input.IsKeyDown(KEY_HOME) and not menudebounce then
+		toggleMenu()
+		menudebounce = true
+	elseif not input.IsKeyDown(KEY_HOME) and menudebounce then menudebounce = not menudebounce
+	end
+end
+
+hook.Add("Think", "keyPressed", keyPressed)
