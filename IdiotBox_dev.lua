@@ -60,7 +60,7 @@ local Contributors = {
 	["STEAM_0:1:75441355"] = "Tester",
 	
 	["STEAM_0:0:453611223"] = "Multihelper",
-	["STEAM_0:1:155573857"] = "Helper"
+	["STEAM_0:1:155573857"] = "Helper",
 	
 	["STEAM_0:1:59798110"] = "Advertiser",
 	["STEAM_0:1:4375194"] = "Advertiser",
@@ -209,7 +209,7 @@ local view = {
     if CurrentConfig["Visuals"].thirdperson then
         return view
     end
-end)
+end
 --- MENU TEST ---
 
 local function drawSquare()
