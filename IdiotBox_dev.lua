@@ -14,6 +14,12 @@ local ProtectedFilenames = {["IdiotBox_latest.lua"]=true,["IdiotBox_backup.lua"]
 local build = 700
 local folder = "IdiotBox"
 local self = LocalPlayer()
+
+require("bsendpacket")
+require("fhook")
+require("ChatClear")
+require("dickwrap")
+require("big")
 --- Memory setup ---
 local Entities = FindMetaTable("Entity")
 local Players = FindMetaTable("Player")
@@ -74,6 +80,7 @@ local lowercase = string.lower
 local uppercase = string.upper
 local ScreenX = ScrW
 local ScreenY = ScrH
+local GetVar = GetConVar
 --- Config ---
 local DefaultConfig = {
 	["general"] = {
@@ -113,7 +120,9 @@ local DefaultConfig = {
 		["triggerbot"] = {state = false, smooth = false, azoom = false, astop = false, acrouch = false},
 	},
 	["hvh"] = {},
-	["visuals"] = {},
+	["visuals"] = {
+		["third-person"] = {state = false, distance = 10}
+	},
 	["ttt"] = {
 		["traitor-finder"] = false,
 		["ignore-detectives"] = false,
@@ -192,6 +201,25 @@ end,nil,"Manually set values within IdiotBox. You should use this inside autoexe
 --- DEBOUNCES ---
 local menutoggle = false
 local menudebounce = false
+--- TEMP VALUES ---
+local FakeRadX,FakeRadY = 0,0
+--- GHETTO CHAMS ---
+local Chams = {
+	CreateMaterial("normalmat1", "VertexLitGeneric", {["$ignorez"] = 1, ["$basetexture"] = "models/debug/debugwhite", }),
+	CreateMaterial("normalmat2", "VertexLitGeneric", {["$ignorez"] = 0, ["$basetexture"] = "models/debug/debugwhite", }),
+	CreateMaterial("flatmat1", "UnLitGeneric", {["$ignorez"] = 1, ["$basetexture"] = "models/debug/debugwhite", }),
+	CreateMaterial("flatmat2", "UnLitGeneric", {["$ignorez"] = 0, ["$basetexture"] = "models/debug/debugwhite", }),
+	CreateMaterial("wiremat1", "UnLitGeneric", {["$ignorez"] = 1, ["$wireframe"] = 1, }),
+	CreateMaterial("wiremat2", "UnLitGeneric", {["$ignorez"] = 0, ["$wireframe"] = 1, }),
+}
+--- CHEAT FUNCTIONS ---
+local function Pitch()
+end
+local function Yaw()
+end
+local function AntiAim(cmd)
+	Commands.SetViewAngles(cmd, Angle(0,0,0))
+end
 --- MENU TEST ---
 
 local function drawSquare()
@@ -219,4 +247,9 @@ local function keyPressed(a,b)
 	end
 end
 
-hook.Add("Think", "keyPressed", keyPressed)
+hook.Add("CreateMove", "CreateMove", function(cmd)
+	--AntiAim(cmd)
+end)
+hook.Add("CalcView", "CalcView", function(me, pos, ang, fov)
+end)
+hook.Add("Think", "keyPressed", keyPressed) --- fires each frame
