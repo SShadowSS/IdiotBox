@@ -114,7 +114,9 @@ local DefaultConfig = {
 		["triggerbot"] = {state = false, smooth = false, azoom = false, astop = false, acrouch = false},
 	},
 	["hvh"] = {},
-	["visuals"] = {},
+	["visuals"] = {
+		thirdperson = false
+	},
 	["ttt"] = {
 		["traitor-finder"] = false,
 		["ignore-detectives"] = false,
@@ -201,10 +203,10 @@ local view = {
         origin = pos - (ang:Forward() * 100) or pos,
         ang = ang,
         fov = fov,
-        drawviewer =  ["ThirdPerson"]
+        drawviewer =  CurrentConfig["Visuals"].thirdperson
     }
 
-    if ["ThirdPerson"] then
+    if CurrentConfig["Visuals"].thirdperson then
         return view
     end
 end)
