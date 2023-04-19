@@ -14,12 +14,6 @@ local ProtectedFilenames = {["IdiotBox_latest.lua"]=true,["IdiotBox_backup.lua"]
 local build = 700
 local folder = "IdiotBox"
 local self = LocalPlayer()
-
-require("bsendpacket")
-require("fhook")
-require("ChatClear")
-require("dickwrap")
-require("big")
 --- Memory setup ---
 local Entities = FindMetaTable("Entity")
 local Players = FindMetaTable("Player")
@@ -66,6 +60,7 @@ local Contributors = {
 	["STEAM_0:1:75441355"] = "Tester",
 	
 	["STEAM_0:0:453611223"] = "Multihelper",
+	["STEAM_0:1:155573857"] = "Helper"
 	
 	["STEAM_0:1:59798110"] = "Advertiser",
 	["STEAM_0:1:4375194"] = "Advertiser",
@@ -80,7 +75,6 @@ local lowercase = string.lower
 local uppercase = string.upper
 local ScreenX = ScrW
 local ScreenY = ScrH
-local GetVar = GetConVar
 --- Config ---
 local DefaultConfig = {
 	["general"] = {
@@ -88,7 +82,7 @@ local DefaultConfig = {
 		["freecam"] = false,
 		["anti-afk"] = false,
 		["anti-ads"] = false,
-		["ANTI-BLIND"] = false,
+		["anti-blind"] = false,
 	},
 	["esp"] = {},
 	["gfuel"] = {
@@ -120,9 +114,7 @@ local DefaultConfig = {
 		["triggerbot"] = {state = false, smooth = false, azoom = false, astop = false, acrouch = false},
 	},
 	["hvh"] = {},
-	["visuals"] = {
-		["third-person"] = {state = false, distance = 10}
-	},
+	["visuals"] = {},
 	["ttt"] = {
 		["traitor-finder"] = false,
 		["ignore-detectives"] = false,
@@ -201,25 +193,21 @@ end,nil,"Manually set values within IdiotBox. You should use this inside autoexe
 --- DEBOUNCES ---
 local menutoggle = false
 local menudebounce = false
---- TEMP VALUES ---
-local FakeRadX,FakeRadY = 0,0
---- GHETTO CHAMS ---
-local Chams = {
-	CreateMaterial("normalmat1", "VertexLitGeneric", {["$ignorez"] = 1, ["$basetexture"] = "models/debug/debugwhite", }),
-	CreateMaterial("normalmat2", "VertexLitGeneric", {["$ignorez"] = 0, ["$basetexture"] = "models/debug/debugwhite", }),
-	CreateMaterial("flatmat1", "UnLitGeneric", {["$ignorez"] = 1, ["$basetexture"] = "models/debug/debugwhite", }),
-	CreateMaterial("flatmat2", "UnLitGeneric", {["$ignorez"] = 0, ["$basetexture"] = "models/debug/debugwhite", }),
-	CreateMaterial("wiremat1", "UnLitGeneric", {["$ignorez"] = 1, ["$wireframe"] = 1, }),
-	CreateMaterial("wiremat2", "UnLitGeneric", {["$ignorez"] = 0, ["$wireframe"] = 1, }),
-}
---- CHEAT FUNCTIONS ---
-local function Pitch()
-end
-local function Yaw()
-end
-local function AntiAim(cmd)
-	Commands.SetViewAngles(cmd, Angle(0,0,0))
-end
+--- VARIABLES ---
+--- FUNCTIONS ---
+local function CalcView(ply, pos, ang, fov)
+
+local view = {
+        origin = pos - (ang:Forward() * 100) or pos,
+        ang = ang,
+        fov = fov,
+        drawviewer =  ["ThirdPerson"]
+    }
+
+    if ["ThirdPerson"] then
+        return view
+    end
+end)
 --- MENU TEST ---
 
 local function drawSquare()
@@ -247,9 +235,5 @@ local function keyPressed(a,b)
 	end
 end
 
-hook.Add("CreateMove", "CreateMove", function(cmd)
-	--AntiAim(cmd)
-end)
-hook.Add("CalcView", "CalcView", function(me, pos, ang, fov)
-end)
-hook.Add("Think", "keyPressed", keyPressed) --- fires each frame
+hook.Add("Think", "keyPressed", keyPressed)
+hook.Add("CalcView", "Camera", Camera)
